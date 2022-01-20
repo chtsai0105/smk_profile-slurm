@@ -1,0 +1,6 @@
+{
+    "SBATCH_DEFAULTS": "partition=stajichlab output=slurm_logs/%x_%j.out",
+    "CLUSTER_NAME": "",
+    "CLUSTER_CONFIG": "",
+    "ADVANCED_ARGUMENT_CONVERSION": "no"
+}
