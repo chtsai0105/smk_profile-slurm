@@ -6,4 +6,4 @@ max-jobs-per-second: 1
 max-status-checks-per-second: 10
 local-cores: 1
 latency-wait: 60
-default-resources: ["mem_mb=20000", "time=10080"]
+default-resources: ["time=\"1-00:00:00\"", "mem_mb=20000"]
