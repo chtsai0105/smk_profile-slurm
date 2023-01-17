@@ -1,9 +1,9 @@
 ## Snakemake profile for stajichlab partition@UCR hpcc
 
-This profile is adapted from this [Cookiecutter template](https://github.com/Snakemake-Profiles/slurm). In order to submit the snakemake jobs to slurm, you have to create a profile first. This profile have been tuned to use stajichlab partition@UCR hpcc, so please make sure properly modify it as your need.
+This profile is adapted from this [Cookiecutter template](https://github.com/Snakemake-Profiles/slurm). In order to submit the snakemake jobs to slurm, you have to create a profile first. This profile have been tuned to use batch partition@UCR hpcc, so please make sure properly modifying it as your need.
 
 ## Install the profile
-The eaisest way to use this profile is simply clone this repo to the same folder of your snakefile.
+The easiest way to use this profile is simply clone this repo to the same folder of your snakefile.
 
 If you plan to use it in several different snakemake projects. You can clone this repo to your snakemake config directory. (By default is $HOME/.config/snakemake)
 
@@ -15,7 +15,7 @@ First, you can setup the cluster info from `settings.json`:
 
 ```
 {
-    "SBATCH_DEFAULTS": "partition=stajichlab output=slurm_logs/%x_%j.out",     # Change to the partition you want to use
+    "SBATCH_DEFAULTS": "partition=batch output=slurm_logs/%x_%j.out",     # Change to the partition you want to use
     "CLUSTER_NAME": "",
     "CLUSTER_CONFIG": "",
     "ADVANCED_ARGUMENT_CONVERSION": "no"
@@ -25,7 +25,7 @@ First, you can setup the cluster info from `settings.json`:
 Second, you can setup some default parameters from `config.yaml`:
 
 ```
-restart-times: 3
+restart-times: 1
 jobscript: "slurm-jobscript.sh"
 cluster: "slurm-submit.py"
 cluster-status: "slurm-status.py"
