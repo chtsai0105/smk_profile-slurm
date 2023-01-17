@@ -1,5 +1,5 @@
 {
-    "SBATCH_DEFAULTS": "partition=stajichlab output=logs/%x_%j.out",
+    "SBATCH_DEFAULTS": "partition=stajichlab output=logs/%x_%j.out --export=PATH",
     "CLUSTER_NAME": "",
     "CLUSTER_CONFIG": "",
     "ADVANCED_ARGUMENT_CONVERSION": "no"
