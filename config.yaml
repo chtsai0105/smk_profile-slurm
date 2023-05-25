@@ -1,9 +1,25 @@
+cluster:
+  mkdir -p logs/{rule} &&
+  sbatch
+    --partition={resources.partition}
+    --cpus-per-task={threads}
+    --time={resources.time}
+    --mem={resources.mem_mb}
+    --job-name=smk-{rule}
+    --output=logs/{rule}/{rule}-%j.out
+default-resources:
+  - partition=batch
+  - time="1-00:00:00"
+  - mem_mb=max(input.size_mb * 5 * attempt, 2000)
 restart-times: 3
-jobscript: "slurm-jobscript.sh"
-cluster: "slurm-submit.py"
-cluster-status: "slurm-status.py"
 max-jobs-per-second: 1
 max-status-checks-per-second: 10
 local-cores: 1
 latency-wait: 60
-default-resources: ["time=\"1-00:00:00\"", "mem_mb=max(input.size_mb * 5 * attempt, 2000)"]
+jobs: 8
+max-threads: 12
+keep-going: True
+rerun-incomplete: True
+printshellcmds: True
+scheduler: greedy
+use-conda: True

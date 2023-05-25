@@ -1,58 +1,71 @@
-## Snakemake profile for stajichlab partition@UCR hpcc
+## Snakemake profile for batch partition@UCR hpcc
 
-This profile is adapted from this [Cookiecutter template](https://github.com/Snakemake-Profiles/slurm). In order to submit the snakemake jobs to slurm, you have to create a profile first. This profile have been tuned to use stajichlab partition@UCR hpcc, so please make sure properly modify it as your need.
+This profile is adapted from this [smk-simple-slurm](https://github.com/jdblischak/smk-simple-slurm.git) and have been tuned to use batch partition@UCR hpcc, 
+so please make sure properly modify it as your need.
+
+If you need more comprehensive feature, please refer to the [official Slurm profile for Snakemake](https://github.com/Snakemake-Profiles/slurm.git).
+
+<br>
 
 ## Install the profile
-The eaisest way to use this profile is simply clone this repo to the same folder of your snakefile.
+The eaisest way to use this profile is simply clone this repo to the root folder of your snakemake project and named it as `slurm`.
 
 If you plan to use it in several different snakemake projects. You can clone this repo to your snakemake config directory. (By default is $HOME/.config/snakemake)
 
-## Modified the profile
+<br>
 
-There are 2 config files can be modified.
+## Modify the profile
 
-First, you can setup the cluster info from `settings.json`:
+You can setup some parameters from `config.yaml`. There are 3 sections in this file.
+The first section is `cluster`, which basically defines the sbatch parameters.
+```
+cluster:
+  mkdir -p logs/{rule} &&
+  sbatch
+    --partition={resources.partition}
+    --cpus-per-task={threads}
+    --time={resources.time}
+    --mem={resources.mem_mb}
+    --job-name=smk-{rule}
+    --output=logs/{rule}/{rule}-%j.out
+```
+
+The second section is `default-resources`, which defines the default parameters that fill in the previous section. Note that it is possible to overwrite all these 
+parameters in the *resources* section of each rule.
 
 ```
-{
-    "SBATCH_DEFAULTS": "partition=stajichlab output=slurm_logs/%x_%j.out",     # Change to the partition you want to use
-    "CLUSTER_NAME": "",
-    "CLUSTER_CONFIG": "",
-    "ADVANCED_ARGUMENT_CONVERSION": "no"
-}
+default-resources:
+  - partition=batch
+  - time="1-00:00:00"
+  - mem_mb=max(input.size_mb * 5 * attempt, 2000)
 ```
 
-Second, you can setup some default parameters from `config.yaml`:
-
+The third section contains additional argument that are going to pass into the snakemake command. Please adjust them as your own need.
 ```
 restart-times: 3
-jobscript: "slurm-jobscript.sh"
-cluster: "slurm-submit.py"
-cluster-status: "slurm-status.py"
 max-jobs-per-second: 1
 max-status-checks-per-second: 10
 local-cores: 1
 latency-wait: 60
-default-resources: ["time=\"1-00:00:00\"", "mem_mb=max(input.size_mb * 5 * attempt, 2000)"]   # You can setup the default resources for all the rules. This value would be overwritten by the `resources` settings defined in each rule.
+jobs: 8
+max-threads: 12
+keep-going: True
+rerun-incomplete: True
+printshellcmds: True
+scheduler: greedy
+use-conda: True
 ```
+
+<br>
 
 ## Using the profile in snakemake
 
-When specifying the profile, Snakemake will search this profile in the snakemake config folder (`$HOME/.config/snakemake`)
-E.g. If you have this repo cloned to your snakemake config folder. (Which the full path is `$HOME/.config/snakemake/snakemake_profile-slurm`) You can specify to use it by:
+When specifying the profile, Snakemake will search the profile in per-project, user and global configuration directories until the name is matched.
+E.g. If your project located in `$HOME/path/to/project` and the profile named `slurm`. You can have this profile saved in either `$HOME/path/to/project`, 
+`$HOME/.config/snakemake` or `/etc/xdg/snakemake`.
 
+Later you can specify to use the profile by:
 ```
-snakemake --profile snakemake_profile-slurm [Options...]
-
-```
-
-Alternatively, snakemake also accept relative or absolute path for specifying the profile. E.g. You have this profile saved with your snakefile at `$HOME/path/to/project/snakemake_profile-slurm`, and you have already cd into this directory. You can either specify it with relative path:
-```
-snakemake --profile ./snakemake_profile-slurm [Options...]
-
-```
-Or absolute path:
-```
-snakemake --profile $HOME/path/to/project/snakemake_profile-slurm [Options...]
+snakemake --profile slurm [additional options...]
 
 ```
